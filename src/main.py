@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_basicauth import BasicAuth
 from textblob import TextBlob
 from translate import Translator
 from rich import print
@@ -12,12 +13,17 @@ translator= Translator(from_lang='pt', to_lang='en')
 sort_key = ["Tamanho", "Ano", "Garagem"]
 
 app = Flask(__name__)
+app.config['BASIC_AUTH_USERNAME'] = 'douglas'
+app.config['BASIC_AUTH_PASSWORD'] = 'flask'
+
+basic_auth = BasicAuth(app)
 
 @app.route('/')
 def home():
     return 'Minha primeira API'
 
 @app.route('/sentimento/<frase>')
+@basic_auth.required
 def sentimento(frase):
     translation = translator.translate(frase)
     print(translation)
